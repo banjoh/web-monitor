@@ -1,0 +1,25 @@
+{
+  "interval": 5,
+  "pages": [
+    {
+      "url": "https://msdn.microsoft.com/en-us",
+      "pattern": "Microsoft"
+    },
+    {
+      "url": "http://stackoverflow.com/",
+      "pattern": "<title>Stack Overflow</title>"
+    },
+    {
+      "url": "https://github.com/",
+      "pattern": "<title>GitHub</title>"
+    },
+    {
+      "url": "https://blasedfasdfaosyhfasd/",
+      "pattern": "<title>GitHub</title>"
+    },
+    {
+      "url": "https://github.com/",
+      "pattern": "ölhasdfaäöäasdfasädföasdf"
+    }
+  ]
+}
