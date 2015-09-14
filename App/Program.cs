@@ -29,6 +29,7 @@ namespace App
 
             // Log file to use
             string logFile = Path.Combine(Directory.GetCurrentDirectory(), "log.json");
+            Console.WriteLine("Logs will be stored in " + logFile);
 
             HTTPServer srv = new HTTPServer(logFile);
             srv.Start();
@@ -37,6 +38,7 @@ namespace App
             {
                 Task.Run(async () =>
                 {
+                    // TODO: Implement mechanism to exit from forever loop i.e. Pressing ESC key
                     // Check web pages forever
                     while (true)
                     {

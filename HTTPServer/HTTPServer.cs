@@ -24,7 +24,7 @@ namespace LibHTTPServer
             listener.Prefixes.Add("http://localhost:8000/");
             listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            Console.WriteLine("Server started on http://localhost:8000/");
+            Console.WriteLine("Visit http://localhost:8000/ to see latest web page logs");
 
             LogFile = logFile;
         }

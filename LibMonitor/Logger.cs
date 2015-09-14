@@ -45,9 +45,6 @@ namespace LibMonitor
                     string s = JsonConvert.SerializeObject(dataStore);
                     File.WriteAllText(logFile, s);
                 }
-
-                // Write log to file
-                Console.WriteLine(r);
             }
         }
 
