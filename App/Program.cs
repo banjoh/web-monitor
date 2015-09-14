@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using LibMonitor;
 
 namespace App
@@ -14,6 +14,7 @@ namespace App
             if (args.Length != 1)
             {
                 Console.WriteLine("Usage: WebMonitor.exe config.json");
+                return 1;
             }
             
             // Load configuration file
@@ -22,50 +23,60 @@ namespace App
             {
                 Console.WriteLine("Failed to load the configuration file");
                 Console.Read();
-                return 1;
+                return 2;
             }
 
-            Task.Run(async () =>
+            // Log file to use
+            string logFile = Path.Combine(Directory.GetCurrentDirectory(), "log.json");
+
+            try
             {
-                // Check web pages forever
-                while (true)
+                Task.Run(async () =>
                 {
-                    try
+                    // Check web pages forever
+                    while (true)
                     {
-                        // Test all pages asynchronously
-                        List<Task<PageResult>> tasks = new List<Task<PageResult>>();
-
-                        // TODO: Should we pick pages in groups?
-                        foreach (Page p in config.Pages)
+                        try
                         {
-                            tasks.Add(Task.Run(() =>
-                            {
-                                return LibMonitor.Monitor.TestUrl(p);
-                            }));
-                        }
+                            // Test all pages asynchronously
+                            List<Task<PageResult>> tasks = new List<Task<PageResult>>();
 
-                        // Wait for all tasks to complete
-                        PageResult[] results = await Task.WhenAll(tasks.ToArray());
-
-                        // Read the results of the page test runs
-                        // TODO: Next store the result in a log file
-                        using (Logger l = new Logger("path to log file"))
-                        {
-                            foreach (PageResult r in results)
+                            // TODO: Should we pick pages in groups?
+                            foreach (Page p in config.Pages)
                             {
-                                l.LogResult(r);
+                                tasks.Add(Task.Run(() =>
+                                {
+                                    return LibMonitor.Monitor.TestUrl(p);
+                                }));
+                            }
+
+                            // Wait for all tasks to complete
+                            PageResult[] results = await Task.WhenAll(tasks.ToArray());
+
+                            // Read the results of the page test runs
+                            // TODO: Next store the result in a log file
+                            using (Logger l = new Logger(logFile))
+                            {
+                                foreach (PageResult r in results)
+                                {
+                                    l.LogResult(r);
+                                }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex);
-                    }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(ex);
+                        }
 
-                    await Task.Delay(TimeSpan.FromSeconds(config.Interval));
-                }
-            }).Wait();
-
+                        await Task.Delay(TimeSpan.FromSeconds(config.Interval));
+                    }
+                }).Wait();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            
             return 0;
         }
     }
