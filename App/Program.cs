@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using LibMonitor;
+using LibHTTPServer;
 
 namespace App
 {
@@ -28,6 +29,9 @@ namespace App
 
             // Log file to use
             string logFile = Path.Combine(Directory.GetCurrentDirectory(), "log.json");
+
+            HTTPServer srv = new HTTPServer(logFile);
+            srv.Start();
 
             try
             {
@@ -76,7 +80,8 @@ namespace App
             {
                 Console.WriteLine(ex);
             }
-            
+
+            srv.Stop();
             return 0;
         }
     }
