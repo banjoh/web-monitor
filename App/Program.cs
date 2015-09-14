@@ -59,12 +59,9 @@ namespace App
 
                             // Read the results of the page test runs
                             // TODO: Next store the result in a log file
-                            using (Logger l = new Logger(logFile))
+                            foreach (PageResult r in results)
                             {
-                                foreach (PageResult r in results)
-                                {
-                                    l.LogResult(r);
-                                }
+                                Logger.LogResult(r, logFile);
                             }
                         }
                         catch (Exception ex)

@@ -30,8 +30,8 @@ namespace LibMonitor
                 {
                     Stopwatch watch = Stopwatch.StartNew();
                     content = wc.DownloadString(p.Url);
-                    watch.Stop();
                     responseTime = watch.ElapsedMilliseconds;
+                    watch.Stop();
                     found = true;
                 }
                 catch (WebException webEx)
@@ -50,7 +50,7 @@ namespace LibMonitor
                 }
             }
 
-            var res = new PageResult(p.Url, found, match, responseTime);
+            var res = new PageResult(p.Url, found, match, responseTime, (long)TimeSpan.FromTicks(DateTime.UtcNow.Ticks).TotalSeconds);
             Debug.WriteLine(res);
             return res;
         }

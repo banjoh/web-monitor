@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Net;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using LibMonitor;
 
 namespace LibHTTPServer
 {
@@ -63,7 +67,63 @@ namespace LibHTTPServer
 
         private string HtmlResponse()
         {
-            return "<HTML><BODY> Hello world!</BODY></HTML>";
+            if (!File.Exists(LogFile))
+                return "<!DOCTYPE html><html><body><h2>There are no results to show as of now.</h2></body></html>";
+
+            string html = @"<!DOCTYPE html>
+                            <html>
+                                <head>
+                                    <title>Web Page Monitor</title>
+                                    <style>
+                                        table, th, td {{
+                                            border: 1px solid black;
+                                            border-collapse: collapse;
+                                        }}
+                                        th, td {{
+                                            padding: 15px;
+                                        }}
+                                    </style>
+                                </head>
+                                <body>
+                                     <h2>Latest results of web page monitor stats</h2>
+                                     <table style='width: 100 % '>
+                                        <tr style='font-weight:bold'>
+                                            <td> Url </td>
+                                            <td> Page is alive </td>
+                                            <td> Content valid </td>
+                                            <td> Response time </td>
+                                            <td> Last checked </td>
+                                        </tr>
+                                        {0}
+                                    </table>
+                                </body>
+                            </html>";
+
+            return String.Format(html, ParsePageResults());
+        }
+
+        private string ParsePageResults()
+        {
+            var dataStore = Logger.ReadLogs(LogFile);
+
+            string placeHolder = @"<tr>
+                        <td>{0}</td>
+                        <td>{1}</td>
+                        <td>{2}</td>
+                        <td>{3}</td>
+                        <td>{4}</td>
+                    </tr>";
+
+            List<string> rows = new List<string>();
+            foreach (var url in dataStore.Keys)
+            {
+                var p = dataStore[url].OrderByDescending(x => x.Item4).First();
+
+                string time = new DateTime(0, DateTimeKind.Utc).AddSeconds(p.Item4).ToString("MM/dd/yy H:mm:ss");
+                rows.Add(String.Format(placeHolder, url, p.Item1, p.Item2, p.Item3, time));
+            }
+            
+            return String.Join("\n", rows.ToArray());
         }
 
         public void Stop()

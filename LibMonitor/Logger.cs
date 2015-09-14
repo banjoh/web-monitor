@@ -5,31 +5,28 @@ using Newtonsoft.Json;
 
 namespace LibMonitor
 {
-    public class Logger : IDisposable
+    public class Logger
     {
-        private Dictionary<Uri, List<PageResultBase>> dataStore;
-        private string LogFile { get; set; }
-
-        public Logger(string logFile)
-        {
-            if (File.Exists(logFile))
-            {
-                string jsonData = File.ReadAllText(logFile);
-                dataStore = JsonConvert.DeserializeObject<Dictionary<Uri, List<PageResultBase>>>(jsonData);
-            }
-
-            if (dataStore == null)
-            {
-                dataStore = new Dictionary<Uri, List<PageResultBase>>();
-            }
-            LogFile = logFile;
-        }
-
-        public void LogResult(PageResult r)
+        // TODO: What if we have different log files we need to synchronize access?
+        private static readonly object lockObj = new Object();
+        
+        public static void LogResult(PageResult r, string logFile)
         {
             if (r != null)
             {
-                var p = r as PageResultBase;
+                var dataStore = new Dictionary<Uri, List<Tuple<bool, bool, long, long>>>();
+                var p = new Tuple<bool, bool, long, long>(r.Found, r.Matched, r.ResponseTime, r.TimeStamp);
+
+                if (File.Exists(logFile))
+                {
+                    // TODO: Reading the whole file for every log operation is not very optimal
+                    string jsonData;
+                    lock (lockObj)
+                    {
+                        jsonData = File.ReadAllText(logFile);
+                    }
+                    dataStore = JsonConvert.DeserializeObject<Dictionary<Uri, List<Tuple<bool, bool, long, long>>>>(jsonData);
+                }
 
                 // Store results in data store
                 if (dataStore.ContainsKey(r.Url))
@@ -38,9 +35,15 @@ namespace LibMonitor
                 }
                 else
                 {
-                    var list = new List<PageResultBase>();
+                    var list = new List<Tuple<bool, bool, long, long>>();
                     list.Add(p);
                     dataStore.Add(r.Url, list);
+                }
+
+                lock (lockObj)
+                {
+                    string s = JsonConvert.SerializeObject(dataStore);
+                    File.WriteAllText(logFile, s);
                 }
 
                 // Write log to file
@@ -48,21 +51,19 @@ namespace LibMonitor
             }
         }
 
-        public void Dispose()
+        public static Dictionary<Uri, List<Tuple<bool, bool, long, long>>> ReadLogs(string logFile)
         {
-            try
+            if (File.Exists(logFile))
             {
-                File.WriteAllText(LogFile, JsonConvert.SerializeObject(dataStore));
+                string jsonData;
+                lock (lockObj)
+                {
+                    jsonData = File.ReadAllText(logFile);
+                }
+                return JsonConvert.DeserializeObject<Dictionary<Uri, List<Tuple<bool, bool, long, long>>>>(jsonData);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
 
-        ~Logger()
-        {
-            Dispose();
+            return null;
         }
     }
 }
