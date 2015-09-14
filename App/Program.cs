@@ -25,40 +25,48 @@ namespace App
                 return 1;
             }
 
-            // Check web pages forever
-            while (true)
+            Task.Run(async () =>
             {
-                try
+                // Check web pages forever
+                while (true)
                 {
-                    // Test all pages asynchronously
-                    List<Task<PageResult>> tasks = new List<Task<PageResult>>();
-
-                    foreach (Page p in config.Pages)
+                    try
                     {
-                        tasks.Add(Task.Run(() =>
+                        // Test all pages asynchronously
+                        List<Task<PageResult>> tasks = new List<Task<PageResult>>();
+
+                        // TODO: Should we pick pages in groups?
+                        foreach (Page p in config.Pages)
                         {
-                            return LibMonitor.Monitor.TestUrl(null);
-                        }));
+                            tasks.Add(Task.Run(() =>
+                            {
+                                return LibMonitor.Monitor.TestUrl(p);
+                            }));
+                        }
+
+                        // Wait for all tasks to complete
+                        PageResult[] results = await Task.WhenAll(tasks.ToArray());
+
+                        // Read the results of the page test runs
+                        // TODO: Next store the result in a log file
+                        using (Logger l = new Logger("path to log file"))
+                        {
+                            foreach (PageResult r in results)
+                            {
+                                l.LogResult(r);
+                            }
+                        }
                     }
-
-                    // Wait for all tasks to complete
-                    Task.WaitAll(tasks.ToArray());
-
-                    // Read the results of the page test runs
-                    // TODO: Next store the result in a log file
-                    foreach (Task<PageResult> t in tasks)
+                    catch (Exception ex)
                     {
-                        PageResult r = t.Result;
-                        Console.WriteLine("Url: {0}, Found: {1}, Matched: {2}, ResponseTime (mills): {3}", r.Url, r.Found, r.Matched, r.ResponseTime);
+                        Debug.WriteLine(ex);
                     }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                }
 
-                Thread.Sleep(config.Interval * 1000);
-            }
+                    await Task.Delay(TimeSpan.FromSeconds(config.Interval));
+                }
+            }).Wait();
+
+            return 0;
         }
     }
 }

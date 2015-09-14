@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
-    <Compile Include="Log.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Monitor.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="PageResult.cs" />

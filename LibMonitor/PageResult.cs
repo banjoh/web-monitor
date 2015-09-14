@@ -19,7 +19,7 @@ namespace LibMonitor
 
         public override string ToString()
         {
-            return String.Format("Found: {0}\nMatched: {1}\nResponseTime: {2}", Found, Matched, ResponseTime);
+            return String.Format("Url: {0}, Found: {1}, Matched: {2}, ResponseTime (mills): {3}", Url, Found, Matched, ResponseTime);
         }
     }
 }

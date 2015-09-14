@@ -9,6 +9,9 @@ namespace LibMonitor
     {
         public static PageResult TestUrl(Page p)
         {
+            if (p == null)
+                throw new ArgumentNullException("p is invalid");
+
             if (String.IsNullOrWhiteSpace(p.Pattern))
                 throw new ArgumentException("pattern parameter is invalid");
 
