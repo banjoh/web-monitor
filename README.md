@@ -60,7 +60,8 @@ Web monitor logs are periodically stored in a log.json file. The log contains a 
 
 ##### Dependencies
 * .NET 4.5.2
-* Newtonsoft.Json 7.0.1
+* [Newtonsoft.Json 7.0.1](http://www.newtonsoft.com/json)
+* Windows OS
 
 ### Distributed application approach
 To monitor the same list of web pages in different locations globally, we would have to use a distributed environment for this purpose. A good candidate would be Hadoop framework
@@ -69,4 +70,4 @@ To monitor the same list of web pages in different locations globally, we would 
 Each geographical location would host a node (more than 1 maybe for fault tolerance). These nodes would contain an implementation using slightly modified libraries of the web monitor libraries used in the console application. In the implementation, the key-value pairs used by the mappers and reducers would be **<(url, location), [stats]>**. This would mean that the log file stored in the distributed filesystem (HDFS) would contian an extra value, location. The mappers would produce a location of where the node is and the stats collected from the node's location i.e. connect to the web pages and collect stats. The reducers would then aggregate the data from the mappers into a distributed log file.
 
 ##### Security concerns
-Through HDFS access control for users and "bots" accessing the files, Kerberos for user authentication and SSL for encryption of the network used between the globally distributed nodes, security concerns such as man-in-the-middle attacks and authenticity etc can be mitigated.
+Through HDFS access control for users and "bots" accessing the files, Kerberos for user authentication and SSL for encryption of the network used between the globally distributed nodes, security threats such as man-in-the-middle attacks, authenticity etc can be mitigated.
