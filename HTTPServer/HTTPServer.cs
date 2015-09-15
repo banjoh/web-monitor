@@ -101,6 +101,7 @@ namespace LibHTTPServer
                                      <table style='width: 100 % '>
                                         <tr style='font-weight:bold'>
                                             <td> Url </td>
+                                            <td> Search pattern </td>
                                             <td> Page is alive </td>
                                             <td> Content valid </td>
                                             <td> Response time (milliseconds) </td>
@@ -124,6 +125,7 @@ namespace LibHTTPServer
                         <td>{2}</td>
                         <td>{3}</td>
                         <td>{4}</td>
+                        <td>{5}</td>
                     </tr>";
 
             List<string> rows = new List<string>();
@@ -131,8 +133,8 @@ namespace LibHTTPServer
             {
                 var p = dataStore[url].OrderByDescending(x => x.Item4).First();
 
-                string time = new DateTime(0, DateTimeKind.Utc).AddSeconds(p.Item4).ToString("MM/dd/yy H:mm:ss");
-                rows.Add(String.Format(placeHolder, url, p.Item1, p.Item2, p.Item3, time));
+                string time = new DateTime(0, DateTimeKind.Utc).AddSeconds(p.Item5).ToString("MM/dd/yy H:mm:ss");
+                rows.Add(String.Format(placeHolder, url, p.Item1, p.Item2, p.Item3, p.Item4, time));
             }
             
             return String.Join("\n", rows.ToArray());

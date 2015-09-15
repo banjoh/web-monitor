@@ -7,19 +7,19 @@
     },
     {
       "url": "http://stackoverflow.com/",
-      "pattern": "<title>Stack Overflow</title>"
+      "pattern": "Stack Overflow"
     },
     {
       "url": "https://github.com/",
-      "pattern": "<title>GitHub</title>"
+      "pattern": "GitHub"
     },
     {
       "url": "https://blasedfasdfaosyhfasd/",
-      "pattern": "<title>GitHub</title>"
+      "pattern": "GitHub"
     },
     {
       "url": "https://github.com/banjoh/web-monitor",
-      "pattern": "ölhasdfaäöäasdfasädföasdf"
+      "pattern": "jhgsadfkashdflkjabsd"
     },
 	{
       "url": "https://doc.rust-lang.org/std/net/struct.TcpListener.html",

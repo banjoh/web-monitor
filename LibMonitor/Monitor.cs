@@ -50,7 +50,7 @@ namespace LibMonitor
                 }
             }
 
-            var res = new PageResult(p.Url, found, match, responseTime, (long)TimeSpan.FromTicks(DateTime.UtcNow.Ticks).TotalSeconds);
+            var res = new PageResult(p.Url, p.Pattern, found, match, responseTime, (long)TimeSpan.FromTicks(DateTime.UtcNow.Ticks).TotalSeconds);
             Debug.WriteLine(res);
             return res;
         }
