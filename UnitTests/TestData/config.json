@@ -18,8 +18,20 @@
       "pattern": "<title>GitHub</title>"
     },
     {
-      "url": "https://github.com/",
+      "url": "https://github.com/banjoh/web-monitor",
       "pattern": "ölhasdfaäöäasdfasädföasdf"
+    },
+	{
+      "url": "https://doc.rust-lang.org/std/net/struct.TcpListener.html",
+      "pattern": "TcpListener"
+    },
+	{
+      "url": "http://www.videojug.com/film/rugby-union-guide-to-scrums",
+      "pattern": "TcpListener"
+    },
+	{
+      "url": "http://www.engadget.com/",
+      "pattern": "Engadget"
     }
   ]
 }

@@ -15,7 +15,7 @@ namespace UnitTests
 
             Assert.IsTrue(result.Found);
             Assert.IsTrue(result.Matched);
-            Assert.IsTrue(result.ResponseTime > 0);
+            Assert.IsTrue(result.Response > 0);
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace UnitTests
 
             Assert.IsTrue(result.Found);
             Assert.IsFalse(result.Matched);
-            Assert.IsTrue(result.ResponseTime > 0);
+            Assert.IsTrue(result.Response > 0);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace UnitTests
 
             Assert.IsFalse(result.Found);
             Assert.IsFalse(result.Matched);
-            Assert.IsTrue(result.ResponseTime == 0);
+            Assert.IsTrue(result.Response == 0);
         }
 
         [TestMethod]
@@ -52,7 +52,7 @@ namespace UnitTests
 
             Assert.IsNotNull(c);
             Assert.IsTrue(c.Interval == 5);
-            Assert.IsTrue(c.Pages.Count == 5);
+            Assert.IsTrue(c.Pages.Count == 8);
             Assert.IsTrue(c.Pages[0].Url == new Uri("https://msdn.microsoft.com/en-us"));
             Assert.IsTrue(c.Pages[0].Pattern == "Microsoft");
         }

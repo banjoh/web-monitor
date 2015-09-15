@@ -12,6 +12,8 @@ namespace App
     {
         static int Main(string[] args)
         {
+            Console.WriteLine("######## Web Monitor #########\n");
+
             if (args.Length != 1)
             {
                 Console.WriteLine("Usage: WebMonitor.exe config.json");
@@ -30,6 +32,7 @@ namespace App
             // Log file to use
             string logFile = Path.Combine(Directory.GetCurrentDirectory(), "log.json");
             Console.WriteLine("Logs will be stored in " + logFile);
+            Console.WriteLine("Web pages will be monitored after every " + config.Interval + " seconds");
 
             HTTPServer srv = new HTTPServer(logFile);
             srv.Start();

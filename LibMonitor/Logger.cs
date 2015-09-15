@@ -14,20 +14,9 @@ namespace LibMonitor
         {
             if (r != null)
             {
-                var dataStore = new Dictionary<Uri, List<Tuple<bool, bool, long, long>>>();
-                var p = new Tuple<bool, bool, long, long>(r.Found, r.Matched, r.ResponseTime, r.TimeStamp);
-
-                if (File.Exists(logFile))
-                {
-                    // TODO: Reading the whole file for every log operation is not very optimal
-                    string jsonData;
-                    lock (lockObj)
-                    {
-                        jsonData = File.ReadAllText(logFile);
-                    }
-                    dataStore = JsonConvert.DeserializeObject<Dictionary<Uri, List<Tuple<bool, bool, long, long>>>>(jsonData);
-                }
-
+                var dataStore = Deserialize(logFile);
+                var p = new Tuple<bool, bool, long, long>(r.Found, r.Matched, r.Response, r.TimeStamp);
+                
                 // Store results in data store
                 if (dataStore.ContainsKey(r.Url))
                 {
@@ -40,15 +29,12 @@ namespace LibMonitor
                     dataStore.Add(r.Url, list);
                 }
 
-                lock (lockObj)
-                {
-                    string s = JsonConvert.SerializeObject(dataStore);
-                    File.WriteAllText(logFile, s);
-                }
+                Logger.Serialize(dataStore, logFile);
+
             }
         }
 
-        public static Dictionary<Uri, List<Tuple<bool, bool, long, long>>> ReadLogs(string logFile)
+        public static Dictionary<Uri, List<Tuple<bool, bool, long, long>>> Deserialize(string logFile)
         {
             if (File.Exists(logFile))
             {
@@ -60,7 +46,17 @@ namespace LibMonitor
                 return JsonConvert.DeserializeObject<Dictionary<Uri, List<Tuple<bool, bool, long, long>>>>(jsonData);
             }
 
-            return null;
+            return new Dictionary<Uri, List<Tuple<bool, bool, long, long>>>();
+        }
+
+        public static string Serialize(Dictionary<Uri, List<Tuple<bool, bool, long, long>>> dataStore, string logFile)
+        {
+            string s = JsonConvert.SerializeObject(dataStore);
+            lock (lockObj)
+            {
+                File.WriteAllText(logFile, s);
+            }
+            return s;
         }
     }
 }

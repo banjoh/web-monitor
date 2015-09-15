@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.Sockets;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,12 +22,23 @@ namespace LibHTTPServer
             }
 
             listener = new HttpListener();
-            listener.Prefixes.Add("http://localhost:8000/");
+            string homePage = HomePage();
+            listener.Prefixes.Add(homePage);
             listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
-            Console.WriteLine("Visit http://localhost:8000/ to see latest web page logs");
+            Console.WriteLine("Visit " + homePage + " to see latest web monitoring stats");
 
             LogFile = logFile;
+        }
+
+        private string HomePage()
+        {
+            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
+            l.Start();
+            int port = ((IPEndPoint)l.LocalEndpoint).Port;
+            l.Stop();
+
+            return String.Format(@"http://localhost:{0}/", port);
         }
 
         public void Dispose()
@@ -91,7 +103,7 @@ namespace LibHTTPServer
                                             <td> Url </td>
                                             <td> Page is alive </td>
                                             <td> Content valid </td>
-                                            <td> Response time </td>
+                                            <td> Response time (milliseconds) </td>
                                             <td> Last checked </td>
                                         </tr>
                                         {0}
@@ -104,7 +116,7 @@ namespace LibHTTPServer
 
         private string ParsePageResults()
         {
-            var dataStore = Logger.ReadLogs(LogFile);
+            var dataStore = Logger.Deserialize(LogFile);
 
             string placeHolder = @"<tr>
                         <td>{0}</td>
